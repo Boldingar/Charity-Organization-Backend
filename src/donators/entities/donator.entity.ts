@@ -10,7 +10,7 @@ import {
 @Entity({ name: 'donators' })
 export class Donator {
   @PrimaryColumn()
-  ssn: number;
+  ssn: string;
 
   @Column()
   name: string;

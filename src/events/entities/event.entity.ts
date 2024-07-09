@@ -26,10 +26,6 @@ export class Event {
   @Column()
   fundingAmount: number;
 
-  @OneToOne(() => Department) department: Department;
-  @Column()
-  fundingDep: string;
-
   @ManyToMany(() => Beneficiary, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
@@ -63,5 +59,5 @@ export class Event {
 
   @OneToOne(() => Staff) staff: Staff;
   @Column()
-  organizerSSN: number;
+  organizerSSN: string;
 }

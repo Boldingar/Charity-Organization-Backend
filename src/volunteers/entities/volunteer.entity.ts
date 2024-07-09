@@ -11,7 +11,7 @@ import {
 @Entity({ name: 'volunteers' })
 export class Volunteer {
   @PrimaryColumn()
-  ssn: number;
+  ssn: string;
 
   @Column()
   name: string;

@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { DonatorsService } from './donators.service';
 import { CreateDonatorDto } from './dto/create-donator.dto';
 import { UpdateDonatorDto } from './dto/update-donator.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiBearerAuth('Bearer')
+@UseGuards(AuthGuard)
 @Controller('donators')
 export class DonatorsController {
   constructor(private readonly donatorsService: DonatorsService) {}
@@ -17,18 +21,18 @@ export class DonatorsController {
     return this.donatorsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.donatorsService.findOne(+id);
+  @Get(':ssn')
+  findOne(@Param('ssn') ssn: string) {
+    return this.donatorsService.findOne(ssn);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDonatorDto: UpdateDonatorDto) {
-    return this.donatorsService.update(+id, updateDonatorDto);
+  @Patch(':ssn')
+  update(@Param('ssn') ssn: string, @Body() updateDonatorDto: UpdateDonatorDto) {
+    return this.donatorsService.update(ssn, updateDonatorDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.donatorsService.remove(+id);
+  @Delete(':ssn')
+  remove(@Param('ssn') ssn: string) {
+    return this.donatorsService.remove(ssn);
   }
 }

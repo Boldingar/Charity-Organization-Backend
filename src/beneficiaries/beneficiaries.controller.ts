@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { BeneficiariesService } from './beneficiaries.service';
 import { CreateBeneficiaryDto } from './dto/create-beneficiary.dto';
 import { UpdateBeneficiaryDto } from './dto/update-beneficiary.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('beneficiary')
+@ApiBearerAuth('Bearer')
+@UseGuards(AuthGuard)
 @Controller('beneficiaries')
 export class BeneficiariesController {
   constructor(private readonly beneficiariesService: BeneficiariesService) {}
 
-  @Post()
+  @Post('/create')
   create(@Body() createBeneficiaryDto: CreateBeneficiaryDto) {
     return this.beneficiariesService.create(createBeneficiaryDto);
   }
 
-  @Get()
+  @Get('/findAll')
   findAll() {
     return this.beneficiariesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.beneficiariesService.findOne(+id);
+  @Get('/find:ssn')
+  findOne(@Param('ssn') ssn: string) {
+    return this.beneficiariesService.findOne(ssn);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBeneficiaryDto: UpdateBeneficiaryDto) {
-    return this.beneficiariesService.update(+id, updateBeneficiaryDto);
+  @Patch('/update:ssn')
+  update(
+    @Param('ssn') ssn: string,
+    @Body() updateBeneficiaryDto: UpdateBeneficiaryDto,
+  ) {
+    return this.beneficiariesService.update(ssn, updateBeneficiaryDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.beneficiariesService.remove(+id);
+  @Delete('/delete:ssn')
+  remove(@Param('ssn') ssn: string) {
+    return this.beneficiariesService.remove(ssn);
   }
 }

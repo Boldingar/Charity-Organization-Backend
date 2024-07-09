@@ -21,11 +21,11 @@ export class StaffService {
     return await this.StaffRepository.find();
   }
 
-  async findOne(ssn: number) {
+  async findOne(ssn: string) {
     return await this.StaffRepository.findOne({ where: { ssn } });
   }
 
-  async update(ssn: number, updateStaffDto: UpdateStaffDto) {
+  async update(ssn: string, updateStaffDto: UpdateStaffDto) {
     const Staff = await this.findOne(ssn);
 
     if (!Staff) {
@@ -37,7 +37,7 @@ export class StaffService {
     return await this.StaffRepository.save(Staff);
   }
 
-  async remove(ssn: number) {
+  async remove(ssn: string) {
     const Staff = await this.findOne(ssn);
 
     if (!Staff) {

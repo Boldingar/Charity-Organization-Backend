@@ -29,26 +29,18 @@ export class EventService {
     event.name = createEventDto.name;
     event.date = createEventDto.date;
     event.fundingAmount = createEventDto.fundingAmount;
+    event.organizerSSN = createEventDto.organizerSSN;
 
-    // Fetch the Department entity
-    event.department = await this.departmentRepository.findOneBy({ name: createEventDto.department });
-    if (!event.department) {
-      throw new NotFoundException('Department not found');
-    }
-
-    // Fetch the Beneficiaries entities
     event.beneficiaries = await this.beneficiaryRepository.findByIds(createEventDto.beneficiariesSSN);
     if (event.beneficiaries.length !== createEventDto.beneficiariesSSN.length) {
       throw new NotFoundException('One or more Beneficiaries not found');
     }
 
-    // Fetch the Volunteers entities
     event.volunteers = await this.volunteerRepository.findByIds(createEventDto.volunteersSSN);
     if (event.volunteers.length !== createEventDto.volunteersSSN.length) {
       throw new NotFoundException('One or more Volunteers not found');
     }
 
-    // Fetch the Staff entity
     event.staff = await this.staffRepository.findOneBy({ ssn: createEventDto.organizerSSN });
     if (!event.staff) {
       throw new NotFoundException('Organizer not found');
@@ -64,14 +56,45 @@ export class EventService {
   async findOne(id: number): Promise<Event> {
     return await this.eventRepository.findOne({ where: { id } });
   }
+
   async update(id: number, updateEventDto: UpdateEventDto) {
     const event = await this.findOne(id);
 
     if (!event) {
-      throw new NotFoundException();
+      throw new NotFoundException('Event not found');
     }
 
-    Object.assign(event, updateEventDto);
+    if (updateEventDto.name !== undefined) {
+      event.name = updateEventDto.name;
+    }
+    if (updateEventDto.date !== undefined) {
+      event.date = updateEventDto.date;
+    }
+    if (updateEventDto.fundingAmount !== undefined) {
+      event.fundingAmount = updateEventDto.fundingAmount;
+    }
+    if (updateEventDto.beneficiariesSSN !== undefined) {
+      const beneficiaries = await this.beneficiaryRepository.findByIds(updateEventDto.beneficiariesSSN);
+      if (beneficiaries.length !== updateEventDto.beneficiariesSSN.length) {
+        throw new NotFoundException('One or more Beneficiaries not found');
+      }
+      event.beneficiaries = beneficiaries;
+    }
+    if (updateEventDto.volunteersSSN !== undefined) {
+      const volunteers = await this.volunteerRepository.findByIds(updateEventDto.volunteersSSN);
+      if (volunteers.length !== updateEventDto.volunteersSSN.length) {
+        throw new NotFoundException('One or more Volunteers not found');
+      }
+      event.volunteers = volunteers;
+    }
+    if (updateEventDto.organizerSSN !== undefined) {
+      const organizer = await this.staffRepository.findOneBy({ ssn: updateEventDto.organizerSSN });
+      if (!organizer) {
+        throw new NotFoundException('Organizer not found');
+      }
+      event.staff = organizer;
+      event.organizerSSN = updateEventDto.organizerSSN;
+    }
 
     return await this.eventRepository.save(event);
   }
@@ -80,7 +103,7 @@ export class EventService {
     const event = await this.findOne(id);
 
     if (!event) {
-      throw new NotFoundException();
+      throw new NotFoundException('Event not found');
     }
 
     return await this.eventRepository.remove(event);

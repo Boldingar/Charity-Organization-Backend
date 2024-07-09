@@ -21,11 +21,11 @@ export class DonatorsService {
     return await this.DonatorRepository.find();
   }
 
-  async findOne(ssn: number) {
+  async findOne(ssn: string) {
     return await this.DonatorRepository.findOne({ where: { ssn } });
   }
 
-  async update(ssn: number, updateDonatorDto: UpdateDonatorDto) {
+  async update(ssn: string, updateDonatorDto: UpdateDonatorDto) {
     const Donator = await this.findOne(ssn);
 
     if (!Donator) {
@@ -37,7 +37,7 @@ export class DonatorsService {
     return await this.DonatorRepository.save(Donator);
   }
 
-  async remove(ssn: number) {
+  async remove(ssn: string) {
     const Donator = await this.findOne(ssn);
 
     if (!Donator) {

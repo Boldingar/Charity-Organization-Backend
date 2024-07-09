@@ -10,4 +10,6 @@ export class Department {
   hotline: number;
 
   @OneToOne(() => Staff) staff: Staff;
+  @Column()
+  managerSSN: string
 }

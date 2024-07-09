@@ -43,11 +43,11 @@ export class VolunteersService {
     return await this.VolunteerRepository.find();
   }
 
-  async findOne(ssn: number) {
+  async findOne(ssn: string) {
     return await this.VolunteerRepository.findOne({ where: { ssn } });
   }
 
-  async update(ssn: number, updateVolunteerDto: UpdateVolunteerDto) {
+  async update(ssn: string, updateVolunteerDto: UpdateVolunteerDto) {
     const volunteer = await this.findOne(ssn);
 
     if (!volunteer) {
@@ -59,7 +59,7 @@ export class VolunteersService {
     return await this.VolunteerRepository.save(volunteer);
   }
 
-  async remove(ssn: number) {
+  async remove(ssn: string) {
     const volunteer = await this.findOne(ssn);
 
     if (!volunteer) {

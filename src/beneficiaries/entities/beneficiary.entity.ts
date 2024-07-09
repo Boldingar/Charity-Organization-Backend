@@ -12,7 +12,7 @@ import {
 @Entity({ name: 'beneficiaries' })
 export class Beneficiary {
   @PrimaryColumn()
-  ssn: number;
+  ssn: string;
 
   @Column()
   name: string;

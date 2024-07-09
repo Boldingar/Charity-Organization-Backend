@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { VolunteersService } from './volunteers.service';
 import { CreateVolunteerDto } from './dto/create-volunteer.dto';
 import { UpdateVolunteerDto } from './dto/update-volunteer.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiBearerAuth('Bearer')
+@UseGuards(AuthGuard)
 @Controller('volunteers')
 export class VolunteersController {
   constructor(private readonly volunteersService: VolunteersService) {}
@@ -17,18 +21,18 @@ export class VolunteersController {
     return this.volunteersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.volunteersService.findOne(+id);
+  @Get(':ssn')
+  findOne(@Param('ssn') ssn: string) {
+    return this.volunteersService.findOne(ssn);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVolunteerDto: UpdateVolunteerDto) {
-    return this.volunteersService.update(+id, updateVolunteerDto);
+  @Patch(':ssn')
+  update(@Param('ssn') ssn: string, @Body() updateVolunteerDto: UpdateVolunteerDto) {
+    return this.volunteersService.update(ssn, updateVolunteerDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.volunteersService.remove(+id);
+  @Delete(':ssn')
+  remove(@Param('ssn') ssn: string) {
+    return this.volunteersService.remove(ssn);
   }
 }
