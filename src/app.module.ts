@@ -29,6 +29,7 @@ import { UsersModule } from './users/users.module';
         database: configService.get('DB_NAME'),
         entities: [join(process.cwd(), 'dist/**/*.entity.js')],
         synchronize: true,
+        logging: true
       }),
     }),
     AuthModule,

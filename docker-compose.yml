@@ -1,0 +1,32 @@
+services:
+  database:
+    image: postgres:16.3
+    container_name: charityDatabase
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=0
+      - POSTGRES_DB=CharityOrganization
+    # volumes:
+    #   - internship-task2:/var/lib/postgresql/data
+    ports:
+      - '5450:5432'
+  
+  backend:
+    build: ./
+    container_name: charityBackend
+    environment:
+      - DB_HOST=charityDatabase
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=0
+      - DB_NAME=CharityOrganization
+    ports:
+      - '8080:8080'
+    links:
+      - database
+
+  # volumes:
+  #   database:
+  #       driver: local
+  #   internship-task2:

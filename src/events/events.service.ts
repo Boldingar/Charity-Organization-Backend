@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { Department } from 'src/departments/entities/department.entity';
@@ -25,28 +25,42 @@ export class EventService {
   ) {}
 
   async create(createEventDto: CreateEventDto): Promise<Event> {
+    // Create a new Event instance
     const event = new Event();
+
     event.name = createEventDto.name;
     event.date = createEventDto.date;
     event.fundingAmount = createEventDto.fundingAmount;
     event.organizerSSN = createEventDto.organizerSSN;
 
-    event.beneficiaries = await this.beneficiaryRepository.findByIds(createEventDto.beneficiariesSSN);
+    // Fetch Beneficiaries entities
+    event.beneficiaries = await this.beneficiaryRepository.find({
+      where: { ssn: In(createEventDto.beneficiariesSSN) },
+    });
     if (event.beneficiaries.length !== createEventDto.beneficiariesSSN.length) {
       throw new NotFoundException('One or more Beneficiaries not found');
     }
 
-    event.volunteers = await this.volunteerRepository.findByIds(createEventDto.volunteersSSN);
+    // Fetch Volunteers entities
+    event.volunteers = await this.volunteerRepository.find({
+      where: { ssn: In(createEventDto.volunteersSSN) },
+    });
     if (event.volunteers.length !== createEventDto.volunteersSSN.length) {
       throw new NotFoundException('One or more Volunteers not found');
     }
 
-    event.staff = await this.staffRepository.findOneBy({ ssn: createEventDto.organizerSSN });
+    // Fetch Staff entity (Organizer)
+    event.staff = await this.staffRepository.findOneBy({
+      ssn: createEventDto.organizerSSN,
+    });
     if (!event.staff) {
       throw new NotFoundException('Organizer not found');
     }
 
-    return await this.eventRepository.save(event);
+    // Save the event entity
+    console.log('eee', event);
+    await this.eventRepository.insert(event);
+    return;
   }
 
   async findAll(): Promise<Event[]> {
@@ -74,21 +88,27 @@ export class EventService {
       event.fundingAmount = updateEventDto.fundingAmount;
     }
     if (updateEventDto.beneficiariesSSN !== undefined) {
-      const beneficiaries = await this.beneficiaryRepository.findByIds(updateEventDto.beneficiariesSSN);
+      const beneficiaries = await this.beneficiaryRepository.findByIds(
+        updateEventDto.beneficiariesSSN,
+      );
       if (beneficiaries.length !== updateEventDto.beneficiariesSSN.length) {
         throw new NotFoundException('One or more Beneficiaries not found');
       }
       event.beneficiaries = beneficiaries;
     }
     if (updateEventDto.volunteersSSN !== undefined) {
-      const volunteers = await this.volunteerRepository.findByIds(updateEventDto.volunteersSSN);
+      const volunteers = await this.volunteerRepository.findByIds(
+        updateEventDto.volunteersSSN,
+      );
       if (volunteers.length !== updateEventDto.volunteersSSN.length) {
         throw new NotFoundException('One or more Volunteers not found');
       }
       event.volunteers = volunteers;
     }
     if (updateEventDto.organizerSSN !== undefined) {
-      const organizer = await this.staffRepository.findOneBy({ ssn: updateEventDto.organizerSSN });
+      const organizer = await this.staffRepository.findOneBy({
+        ssn: updateEventDto.organizerSSN,
+      });
       if (!organizer) {
         throw new NotFoundException('Organizer not found');
       }
