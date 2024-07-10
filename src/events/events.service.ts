@@ -60,7 +60,21 @@ export class EventService {
     // Save the event entity
     console.log('eee', event);
     await this.eventRepository.insert(event);
-    return;
+
+    // Manually manage relationships with QueryBuilder
+  await this.eventRepository
+    .createQueryBuilder()
+    .relation(Event, "beneficiaries")
+    .of(event)
+    .add(event.beneficiaries);
+
+  await this.eventRepository
+    .createQueryBuilder()
+    .relation(Event, "volunteers")
+    .of(event)
+    .add(event.volunteers);
+
+    return event;
   }
 
   async findAll(): Promise<Event[]> {
